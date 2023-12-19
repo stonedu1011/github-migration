@@ -12,6 +12,7 @@ const headers = {
   'User-Agent': 'node.js'
 }
 if (config.token) {
+  console.log(`Using token ${config.token}`)
   headers['Authorization'] = `token ${config.token}`
 }
 console.log('Testing a request')
