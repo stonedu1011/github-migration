@@ -32,8 +32,9 @@ const bumpIssueCount = (issue) => {
 }
 
 const logError = (issue, err) => {
-  console.log(`Could not create issue: ${issue.number}`)
-  console.log(`Message: ${err}`)
+  console.log(`Could not create issue: ${issue.number}\n`)
+  console.log(`Message: ${err}\n`)
+  console.log(`Headers: `+JSON.stringify(err.response.headers, null, "  ")+"\n")
   console.log(`To continue, manually create an issue on your target repo and increment the 'issue' in ./${config.source.repo}/state.json`)
   process.exit(1)
 }
@@ -90,16 +91,24 @@ const main = async () => {
     .sort((a, b) => a.number - b.number)
 
   const state = JSON.parse(await fs.readFile(`./${config.source.repo}/state.json`))
+  const bulkWaitSecs = 40 // github may only accept 20 creation per minute
+  let count = 0
   for (let issue of issues) {
     if (issue.number <= (state.issue || 0)) {
       // we already processed this issue
       console.log(`Skipping ${issue.number}. Already processed`)
+      continue
     } else if (issue.base) {
       await createPull(issue)
       await sleep(60 * 60 * 1000 / config.apiCallsPerHour)
     } else {
       await createIssue(issue)
       await sleep(60 * 60 * 1000 / config.apiCallsPerHour)
+    }
+    count ++
+    if (count % 20 == 0) {
+      console.log(`Wait ${bulkWaitSecs}s...`)
+      await sleep(bulkWaitSecs * 1000)
     }
   }
 }
