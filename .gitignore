@@ -9,5 +9,5 @@ node_modules
 
 # config.js
 # users.js
-state.json
-**/go-lanai
+# state.json
+

@@ -65,12 +65,20 @@ const main = async () => {
   
   // console.log(issues)
   const state = JSON.parse(await fs.readFile(`./${config.source.repo}/state.json`))
+  const bulkWaitSecs = 40 // github may only accept 20 creation per minute
+  let count = 0
   for (let issue of issues) {
     if (issue.number <= (state.updateIssue || 0)) {
       console.log(`Skipping ${issue.number}. Already processed`)
+      continue
     } else {
       await updateBranch(issue)
       await sleep(60 * 60 * 1000 / config.apiCallsPerHour)
+    }
+    count ++
+    if (count % 20 == 0) {
+      console.log(`Wait ${bulkWaitSecs}s...`)
+      await sleep(bulkWaitSecs * 1000)
     }
   }
 }

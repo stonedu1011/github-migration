@@ -14,4 +14,20 @@ module.exports = {
     target: 'TimShi',
     id: '8174522',
   },
+  'bseto': {
+    target: 'bseto',
+    id: '12277640',
+  },
+  'siskande': {
+    target: 'stephan543',
+    id: '58267452',
+  },
+  'pdurcek': {
+    target: 'restwzeasy',
+    id: '2300752'
+  },
+  'scolehma': {
+    target: 'newmodelcoder',
+    id: '22629821'
+  }
 }
